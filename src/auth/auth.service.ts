@@ -74,7 +74,7 @@ export class AuthService {
             //  check if user exist with given email id
             const user = await this.authRepository.getByEmail(userData.email);
             if(user) {
-                throw new HttpException('User already exist with given email id', HttpStatus.UNPROCESSABLE_ENTITY);
+                throw new HttpException('User already exist with given email id', HttpStatus.BAD_REQUEST);
             }
 
             await this.authRepository.create({
@@ -83,14 +83,15 @@ export class AuthService {
             });
             return {success: true};
         } catch (error) {
-            // console.log(error);
+            console.log(error);
             // if (error?.response !== undefined
             //     || error?.response !== ''
             //     || error?.response !== null) {
             //     throw new HttpException(error.response, error.status);
             // }
-            throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
+        throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     async removeRefreshToken(userId: string) {
