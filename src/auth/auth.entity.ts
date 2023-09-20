@@ -43,6 +43,20 @@ export class Auth {
     refresh_token: string;
 
     @Prop({
+        type: String,
+        required: false,
+        default: null
+    })
+    password_reset_token: string;
+
+    @Prop({
+        type: Number,
+        required: false,
+        default: null
+    })
+    password_reset_expires: number
+
+    @Prop({
         type: Boolean,
         required: false,
         default: true

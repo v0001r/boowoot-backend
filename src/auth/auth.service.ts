@@ -5,6 +5,8 @@ import * as bcrypt from 'bcrypt';
 
 import { AuthRepository } from './auth.repository';
 import { RegisterDto } from './dto/register.dto';
+import ForgotPasswordDto from './dto/forgot-password.dto';
+import ResetPasswordDto from './dto/reset-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -83,7 +85,7 @@ export class AuthService {
             });
             return {success: true};
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             // if (error?.response !== undefined
             //     || error?.response !== ''
             //     || error?.response !== null) {
@@ -94,8 +96,71 @@ export class AuthService {
         throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    async removeRefreshToken(userId: string) {
+    async forgotPassword(body: ForgotPasswordDto) {
+        try {
+            // Check user exist or not
+            const userData = await this.authRepository.getByEmail(body.email);
+            if(!userData)
+                throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
 
+            // Generate password reset token
+            const payload: TokenPayload = { userId: userData._id };
+            const token = this.jwtService.sign(payload, {
+                secret: this.configService.get('JWT_SECRET'),
+                expiresIn: `${this.configService.get('JWT_EXPIRATION_TIME')}s`
+            });
+
+            // Update user password reset token
+            const auth = await this.authRepository.findOneAndUpdate({
+                    _id: userData._id,
+                }, { $set: {
+                        password_reset_token: token,
+                        password_reset_expires: Date.now() + 3600000 // 1 hour
+                    }
+                },
+            );
+            if (!auth)
+                throw new HttpException('Error occured while updating.', HttpStatus.INTERNAL_SERVER_ERROR);
+
+            // TODO: send user an email with reset url
+
+            return {success: true};
+        } catch(error) {
+            throw new HttpException(error.response, error.status);
+        }
+    }
+
+    async resetPassword(body: ResetPasswordDto) {
+        try {
+            // Get user info with token
+            const userData = await this.authRepository.findOne({
+                password_reset_token: body.reset_token,
+                password_reset_expires: { $gt: Date.now() }
+            });
+            if(!userData)
+                throw new HttpException('Password reset token is invalid or has expired', HttpStatus.UNPROCESSABLE_ENTITY);
+
+            if(body.password === body.conf_password) {
+                // Update user password reset token
+                await this.authRepository.findOneAndUpdate({
+                        _id: userData._id,
+                    }, { $set: {
+                            password_reset_token: null,
+                            password_reset_expires: null
+                        }
+                    },
+                );
+
+                // TODO: send user an email password has been changed
+
+                return {success: true};
+            }
+        } catch(error) {
+            throw new HttpException(error.response, error.status);
+        }
+    }
+
+    async removeRefreshToken(userId: string) {
         const user = await this.authRepository.findOneAndUpdate(
             {
               _id: userId,
