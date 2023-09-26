@@ -3,16 +3,16 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
-import { AuthRepository } from './auth.repository';
-import { RegisterDto } from './dto/register.dto';
-import ForgotPasswordDto from './dto/forgot-password.dto';
-import ResetPasswordDto from './dto/reset-password.dto';
+import { AuthUserRepository } from '../repositories/auth-user.repository';
+import ForgotPasswordDto from '../dto/forgot-password.dto';
+import ResetPasswordDto from '../dto/reset-password.dto';
+import RegisterUserDto from '../dto/register-user.dto';
 
 @Injectable()
-export class AuthService {
+export class AuthUserService {
     constructor(
         private readonly configService: ConfigService,
-        private readonly authRepository: AuthRepository,
+        private readonly authUserRepository: AuthUserRepository,
         private readonly jwtService: JwtService
     ) {}
 
@@ -37,7 +37,7 @@ export class AuthService {
 
     public async validate(username: string, pass: string) {
         try {
-            const user = await this.authRepository.getByEmail(username);
+            const user = await this.authUserRepository.getByEmail(username);
             if (!user) {
                 throw new HttpException('Staff does not exists', HttpStatus.BAD_REQUEST);
             }
@@ -71,15 +71,23 @@ export class AuthService {
         }
     }
 
-    async register(userData: RegisterDto) {
+    async register(userData: RegisterUserDto) {
         try {
+            let user;
+
             //  check if user exist with given email id
-            const user = await this.authRepository.getByEmail(userData.email);
+            user = await this.authUserRepository.getByEmail(userData.email);
             if(user) {
                 throw new HttpException('User already exist with given email id', HttpStatus.BAD_REQUEST);
             }
 
-            await this.authRepository.create({
+            //  check if user exist with given mobile no
+            user = await this.authUserRepository.getByMobile(userData.mobile);
+            if(user) {
+                throw new HttpException('User already exist with given mobile no', HttpStatus.BAD_REQUEST);
+            }
+
+            await this.authUserRepository.create({
                 ...userData,
                 password: await bcrypt.hash(userData.password, 10)
             });
@@ -91,15 +99,14 @@ export class AuthService {
             //     || error?.response !== null) {
             //     throw new HttpException(error.response, error.status);
             // }
+            throw new HttpException(error.response, error.status);
         }
-
-        throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     async forgotPassword(body: ForgotPasswordDto) {
         try {
             // Check user exist or not
-            const userData = await this.authRepository.getByEmail(body.email);
+            const userData = await this.authUserRepository.getByEmail(body.email);
             if(!userData)
                 throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
 
@@ -111,7 +118,7 @@ export class AuthService {
             });
 
             // Update user password reset token
-            const auth = await this.authRepository.findOneAndUpdate({
+            const auth = await this.authUserRepository.findOneAndUpdate({
                     _id: userData._id,
                 }, { $set: {
                         password_reset_token: token,
@@ -133,7 +140,7 @@ export class AuthService {
     async resetPassword(body: ResetPasswordDto) {
         try {
             // Get user info with token
-            const userData = await this.authRepository.findOne({
+            const userData = await this.authUserRepository.findOne({
                 password_reset_token: body.reset_token,
                 password_reset_expires: { $gt: Date.now() }
             });
@@ -142,7 +149,7 @@ export class AuthService {
 
             if(body.password === body.conf_password) {
                 // Update user password reset token
-                await this.authRepository.findOneAndUpdate({
+                await this.authUserRepository.findOneAndUpdate({
                         _id: userData._id,
                     }, { $set: {
                             password_reset_token: null,
@@ -161,7 +168,7 @@ export class AuthService {
     }
 
     async removeRefreshToken(userId: string) {
-        const user = await this.authRepository.findOneAndUpdate(
+        const user = await this.authUserRepository.findOneAndUpdate(
             {
               _id: userId,
             },

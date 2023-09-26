@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Transform } from 'class-transformer';
 import { Document, ObjectId } from 'mongoose';
-import * as bcrypt from 'bcrypt';
 
 @Schema({ collection: 'auth_logins', versionKey: false, timestamps: true })
 export class Auth {

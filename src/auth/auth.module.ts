@@ -5,14 +5,14 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { DatabaseModule } from 'src/database/database.module';
-import { LocalStrategy } from './local.strategy';
-import { JwtStrategy } from './jwt.strategy';
-import { JwtRefreshStrategy } from './jwt-refresh.strategy';
+import { LocalStrategy } from './strategies/local.strategy';
+import { JwtStrategy } from './strategies/jwt.strategy';
+import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
 
-import { AuthService } from './auth.service';
-import { AuthController } from './auth.controller';
-import { AuthRepository } from './auth.repository';
-import { AuthSchema } from './auth.entity';
+import { AuthService } from './services/auth.service';
+import { AuthController } from './controllers/auth.controller';
+import { AuthRepository } from './repositories/auth.repository';
+import { AuthSchema } from './entities/auth.entity';
 
 export const TenantModelProviders = [
   {

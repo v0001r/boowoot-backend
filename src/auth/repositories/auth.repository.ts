@@ -2,7 +2,7 @@ import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common
 import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
 import { EntityRepository } from 'src/common/database/entity.repository.base';
-import { AuthDocument } from './auth.entity';
+import { AuthDocument } from '../entities/auth.entity';
 
 @Injectable()
 export class AuthRepository extends EntityRepository<AuthDocument> {

@@ -1,12 +1,13 @@
 import { Body, Controller, HttpCode, HttpStatus, Post, Put, Req, UseGuards } from '@nestjs/common';
-import RequestWithUser from './requestWithUser.interface';
-import JwtGuard from './jwt.guard';
-import JwtRefreshGuard from './jwt-refresh-guard';
+import RequestWithUser from '../interfaces/requestWithUser.interface';
+import JwtGuard from '../guards/jwt.guard';
+import JwtRefreshGuard from '../guards/jwt-refresh-guard';
 
-import { AuthService } from './auth.service';
-import RegisterDto from './dto/register.dto';
-import ForgotPasswordDto from './dto/forgot-password.dto';
-import ResetPasswordDto from './dto/reset-password.dto';
+import { AuthService } from '../services/auth.service';
+import RegisterDto from '../dto/register.dto';
+import ForgotPasswordDto from '../dto/forgot-password.dto';
+import ResetPasswordDto from '../dto/reset-password.dto';
+import RegisterUserDto from '../dto/register-user.dto';
 
 @Controller('auth')
 export class AuthController {
