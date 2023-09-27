@@ -93,13 +93,10 @@ export class AuthService {
         return userData;
     }
     async verifyToken(user: string, token: string){
-        const userData = await this.authRepository.findOne({
-            _id: user,
-            refresh_token: token
-        });
+        const userData = await this.authRepository.getIfRefreshTokenMatches(token,user);
 
         if(!userData)
-        throw new HttpException('Invalid Otp or Wrong', HttpStatus.BAD_REQUEST);
+        throw new HttpException('Invalid Login', HttpStatus.BAD_REQUEST);
 
         return userData;
     }
