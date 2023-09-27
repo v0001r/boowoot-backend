@@ -22,17 +22,27 @@ export class Auth {
 
     @Prop({
         type: String,
+        required: [true, 'A staff must have an phone'],
+        unique: [true, 'A staff with that phone exists. The phone must be unique.']
+    })
+    phone: string;
+
+    @Prop({
+        type: String,
+        required: [true, 'Staff user type is required'],
+    })
+    user_type: string;
+
+    @Prop({
+        type: String,
         required: [true, 'A staff must have a password']
     })
     password: string;
     
     @Prop({ 
         type: String,
-        required: [true, 'A staff must have allowed IP(s)'],
-        set: (val: string[]) => val.join(','), 
-        get: (val: string) => val.split(',') 
     })
-    ips: string[];
+    ips: string;
 
     @Prop({
         type: String,

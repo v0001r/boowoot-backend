@@ -10,6 +10,10 @@ export class RegisterDto {
     @IsString()
     email: string;
 
+    @IsNotEmpty()
+    @IsString()
+    phone: string;
+
     @MinLength(8)
     @IsNotEmpty()
     @IsString()
@@ -21,9 +25,8 @@ export class RegisterDto {
     @IsString()
     conf_password: string
 
-    @IsString({ each: true })
-    @IsNotEmpty()
-    ips: string[];
+    @IsString()
+    ips: string;
 }
 
 export default RegisterDto;

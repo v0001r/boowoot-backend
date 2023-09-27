@@ -86,7 +86,7 @@ export class AuthService {
             });
             return {success: true};
         } catch (error) {
-            // console.log(error);
+            console.log(error);
             // if (error?.response !== undefined
             //     || error?.response !== ''
             //     || error?.response !== null) {
