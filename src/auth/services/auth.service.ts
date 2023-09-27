@@ -2,6 +2,8 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import axios, { AxiosResponse } from 'axios';
+
 
 import { AuthRepository } from '../repositories/auth.repository';
 import { RegisterDto } from '../dto/register.dto';
@@ -30,8 +32,8 @@ export class AuthService {
     public getJwtRefreshToken(userId: string) {
         const payload: TokenPayload = { userId };
         const refreshToken = this.jwtService.sign(payload, {
-            secret: this.configService.get('JWT_REFRESH_TOKEN_SECRET'),
-            expiresIn: `${this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION_TIME')}s`
+            secret: this.configService.get('JWT_REFRESH_SECRET'),
+            expiresIn: `${this.configService.get('JWT_REFRESH_EXPIRATION_TIME')}s`
         })
         return refreshToken;
     }
@@ -42,15 +44,10 @@ export class AuthService {
             if (!user) {
                 throw new HttpException('Staff does not exists', HttpStatus.BAD_REQUEST);
             }
-
-            await this.verifyPassword(pass, user.password);
-
-            // validate IPs for staff type users
-
-            // Update user latest login data
-
-            // const { password, ...result } = user;
-            // return result;
+            const isPasswordMatching =  await bcrypt.compare(pass, user.password);
+            if (!isPasswordMatching) {
+                throw new HttpException('Wrong credentials provided', HttpStatus.BAD_REQUEST);
+              }
             return user;
         } catch (error) {
             if (error?.response !== undefined
@@ -60,6 +57,63 @@ export class AuthService {
             }
             throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST)
         }
+    }
+
+    async verifyPhone(phone: string){
+        try {
+            const user = await this.authRepository.getByPhone(phone);
+            console.log(user)
+            if (!user) {
+                throw new HttpException('User does not exists', HttpStatus.BAD_REQUEST);
+            }
+            var otp = Math.floor(1000 + Math.random() * 9000);
+            console.log('otp', otp);
+            var id = user._id;
+            const userUpdate = await this.authRepository.findOneAndUpdate(
+                {
+                  _id: id,
+                },
+                { $set: {otp: otp} },
+            );
+            return {id, otp};
+        } catch (e){
+            throw new HttpException(e.response, e.status)
+        }
+    }
+
+    async verifyOtp(user: string, otp: string){
+        const userData = await this.authRepository.findOne({
+            _id: user,
+            otp: otp
+        });
+
+        if(!userData)
+        throw new HttpException('Invalid Otp or Wrong', HttpStatus.BAD_REQUEST);
+
+        return userData;
+    }
+    async verifyToken(user: string, token: string){
+        const userData = await this.authRepository.findOne({
+            _id: user,
+            refresh_token: token
+        });
+
+        if(!userData)
+        throw new HttpException('Invalid Otp or Wrong', HttpStatus.BAD_REQUEST);
+
+        return userData;
+    }
+
+    async resendOtp(user: string, otp: string){
+        const userData = await this.authRepository.findOne({
+            _id: user,
+            otp: otp
+        });
+
+        if(!userData)
+        throw new HttpException('User Not forund', HttpStatus.BAD_REQUEST);
+
+        return userData;
     }
 
     private async verifyPassword(plainTextPassword: string, hashedPassword: string) {
@@ -78,6 +132,11 @@ export class AuthService {
             const user = await this.authRepository.getByEmail(userData.email);
             if(user) {
                 throw new HttpException('User already exist with given email id', HttpStatus.BAD_REQUEST);
+            }
+            const usermobile = await this.authRepository.getByPhone(userData.mobile);
+                        
+            if(usermobile) {
+                throw new HttpException('User already exist with given Mobile', HttpStatus.BAD_REQUEST);
             }
 
             await this.authRepository.create({
@@ -168,6 +227,18 @@ export class AuthService {
             { $set: {refresh_token: null} },
         );
 
+        if(!user)
+            throw new HttpException('Error occured while updating.', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    async setCurrentRefreshToken(refreshToken: string, userId: number) {
+        // console.log(userId);
+        const user = await this.authRepository.findOneAndUpdate(
+            {
+              _id: userId,
+            },
+            { $set: {refresh_token: refreshToken} },
+        );
         if(!user)
             throw new HttpException('Error occured while updating.', HttpStatus.INTERNAL_SERVER_ERROR);
     }

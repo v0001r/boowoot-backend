@@ -26,7 +26,16 @@ export class AuthRepository extends EntityRepository<AuthDocument> {
   async getByEmail(email: string) {
     let user;
     try {
-      user = await this.authModel.findOne({ email, status: true }, 'title status email').exec();
+      user = await this.authModel.findOne({ email, status: true }, '_id status email mobile password').exec();
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+    return user;
+  }
+  async getByPhone(mobile: string) {
+    let user;
+    try {
+      user = await this.authModel.findOne({ mobile, status: true }, '_id status email mobile password').exec();
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

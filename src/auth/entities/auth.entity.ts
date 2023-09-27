@@ -86,6 +86,12 @@ export class Auth {
     })
     status: boolean;
 
+    @Prop({
+        type: String,
+        required: false,
+    })
+    otp: string;
+
     @Prop()
     createdAt: Date
 
