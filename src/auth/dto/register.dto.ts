@@ -1,7 +1,21 @@
-import { IsString, IsNotEmpty, MinLength } from 'class-validator';
+import { IsString, IsNotEmpty, MinLength, IsEnum } from 'class-validator';
 import { ValidateConfPassword } from 'src/common/validators/validate-confpassword';
 
+export enum USER_TYPES {
+    ADMIN = 'AD',
+    STAFF = 'S',
+    AGENT = 'A',
+    CLIENT = 'C',
+    CHANNEL_PARTNER = 'CP',
+    CHILD_USER = 'CU',
+}
+
 export class RegisterDto {
+
+    @IsNotEmpty()
+    @IsString()
+    ref_id: string;
+
     @IsNotEmpty()
     @IsString()
     name: string;
@@ -12,21 +26,22 @@ export class RegisterDto {
 
     @IsNotEmpty()
     @IsString()
-    phone: string;
+    mobile: string;
+
+    @IsNotEmpty()
+    @IsEnum(USER_TYPES)
+    user_type: string;
 
     @MinLength(8)
     @IsNotEmpty()
     @IsString()
     password: string;
 
-    @ValidateConfPassword()
-    @MinLength(8)
-    @IsNotEmpty()
     @IsString()
-    conf_password: string
+    ip: string;
 
     @IsString()
-    ips: string;
+    mac_id: string;
 }
 
 export default RegisterDto;

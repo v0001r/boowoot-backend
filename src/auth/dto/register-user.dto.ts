@@ -1,9 +1,12 @@
 import { IsString, IsNotEmpty, MinLength, IsEnum } from 'class-validator';
 
 export enum USER_TYPES {
+    ADMIN = 'AD',
+    STAFF = 'S',
     AGENT = 'A',
     CLIENT = 'C',
     CHANNEL_PARTNER = 'CP',
+    CHILD_USER = 'CU',
 }
 
 export class RegisterUserDto {
