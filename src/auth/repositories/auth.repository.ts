@@ -45,7 +45,7 @@ export class AuthRepository extends EntityRepository<AuthDocument> {
 
   async getIfRefreshTokenMatches(refreshToken: string, userId: string) {
     const user = await this.getById(userId);
-    let isRefreshTokenMatching;
+    let isRefreshTokenMatching = false;
     if(user.refresh_token !== null) {
        isRefreshTokenMatching = await bcrypt.compare(
         refreshToken,

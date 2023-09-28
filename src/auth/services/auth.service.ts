@@ -92,13 +92,31 @@ export class AuthService {
 
         return userData;
     }
-    async verifyToken(user: string, token: string){
-        const userData = await this.authRepository.getIfRefreshTokenMatches(token,user);
+    // async verifyToken(user: string, token: string){
+    //     // const userData = await this.authRepository.getIfRefreshTokenMatches(token,user);
+     
+    //         const decoded = this.jwtService.verify(token);
+    //         console.log(decoded);
+    //         return true; // Token is valid
+         
+    //     // if(!userData)
+    //     // throw new HttpException('Invalid Login', HttpStatus.BAD_REQUEST);
 
+    //     // return userData;
+    // }
+
+    async verifyToken(token: string){
+        const decode = this.jwtService.verify(token);
+        if(decode){
+        const userData = await this.authRepository.findOne({
+            _id: decode.userId,
+        });
         if(!userData)
         throw new HttpException('Invalid Login', HttpStatus.BAD_REQUEST);
 
         return userData;
+       }
+       throw new HttpException('Invalid Login', HttpStatus.BAD_REQUEST);
     }
 
     async resendOtp(user: string){

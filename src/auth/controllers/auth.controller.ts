@@ -142,7 +142,7 @@ export class AuthController {
     @HttpCode(HttpStatus.OK)
     @Post('verify-token')
     async verifyToken(@Body() body) {
-        const user = await this.authService.verifyToken(body.id, body.token);
+        const user = await this.authService.verifyToken(body.token);
         if(user){
         return {
             success: true,
