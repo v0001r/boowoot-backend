@@ -15,7 +15,7 @@ export class AuthRepository extends EntityRepository<AuthDocument> {
   async getById(_id: string) {
     let user;
     try {
-      user = await this.authModel.findOne({ _id, status: true }, 'title status email').exec();
+      user = await this.authModel.findOne({ _id, status: true }, 'title status email refresh_token').exec();
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -26,7 +26,7 @@ export class AuthRepository extends EntityRepository<AuthDocument> {
   async getByEmail(email: string) {
     let user;
     try {
-      user = await this.authModel.findOne({ email, status: true }, '_id status email mobile password').exec();
+      user = await this.authModel.findOne({ email, status: true }, '_id status email mobile password refresh_token').exec();
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -35,7 +35,7 @@ export class AuthRepository extends EntityRepository<AuthDocument> {
   async getByPhone(mobile: string) {
     let user;
     try {
-      user = await this.authModel.findOne({ mobile, status: true }, '_id status email mobile password').exec();
+      user = await this.authModel.findOne({ mobile, status: true }, '_id status email mobile password refresh_token').exec();
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -45,14 +45,15 @@ export class AuthRepository extends EntityRepository<AuthDocument> {
 
   async getIfRefreshTokenMatches(refreshToken: string, userId: string) {
     const user = await this.getById(userId);
-    let isRefreshTokenMatching = false;
-    
+    let isRefreshTokenMatching;
     if(user.refresh_token !== null) {
-      isRefreshTokenMatching = await bcrypt.compare(
+       isRefreshTokenMatching = await bcrypt.compare(
         refreshToken,
         user.refresh_token
       );
     }
+    
+    console.log(isRefreshTokenMatching);
 
     if (isRefreshTokenMatching) {
       return user;

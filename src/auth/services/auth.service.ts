@@ -101,10 +101,9 @@ export class AuthService {
         return userData;
     }
 
-    async resendOtp(user: string, otp: string){
+    async resendOtp(user: string){
         const userData = await this.authRepository.findOne({
             _id: user,
-            otp: otp
         });
 
         if(!userData)

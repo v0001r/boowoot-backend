@@ -105,7 +105,7 @@ export class AuthController {
     @HttpCode(HttpStatus.OK)
     @Post('resend-otp')
     async resendOtp(@Body() body) {
-        const user = await this.authService.resendOtp(body.id, body.otp);
+        const user = await this.authService.resendOtp(body.id);
         if(user){
             var  data = {
                 mobile: '91'+user.mobile,
