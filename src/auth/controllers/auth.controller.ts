@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
 import RequestWithUser from '../interfaces/requestWithUser.interface';
 import JwtGuard from '../guards/jwt.guard';
 import JwtRefreshGuard from '../guards/jwt-refresh-guard';
@@ -9,6 +9,7 @@ import RegisterDto from '../dto/register.dto';
 import ForgotPasswordDto from '../dto/forgot-password.dto';
 import ResetPasswordDto from '../dto/reset-password.dto';
 import RegisterUserDto from '../dto/register-user.dto';
+import ParamsWithId from 'src/common/params-with-id';
 
 @Controller('auth')
 export class AuthController {
@@ -100,6 +101,48 @@ export class AuthController {
         }
         
         return {'status': 400, 'message': 'something went wrong'};
+    }
+
+    // @HttpCode(HttpStatus.OK)
+    // @Get('profile')
+    // async getProfile(@Body() body) {
+    //     const user = await this.authService.getProfile(body.userId);
+
+    //     if(user){
+    //         const data = {
+    //             id: user._doc._id.toString(),
+    //             email: user._doc.email,
+    //             mobile: user._doc.mobile,
+    //             status: user._doc.status
+    //         }
+    //         return data;
+    //     }
+        
+    //     return {'status': 400, 'message': 'something went wrong'};
+    // }
+
+    // @HttpCode(HttpStatus.OK)
+    // @Get('profile:id')
+    // findOne(@Param('userId') userId: string) {
+    //     console.log(userId);
+    //   return this.authService.getProfile(userId);
+      
+    // }
+
+    @Get(':id')
+    async findOne(@Param('id') id : string) {
+    const user = await this.authService.getProfile(id);
+      if(user){
+        const data = {
+            id: user._id.toString(),
+            email: user.email,
+            mobile: user.mobile,
+            status: user.status
+        }
+        return data;
+    }
+    return {'status': 400, 'message': 'something went wrong'};
+      
     }
 
     @HttpCode(HttpStatus.OK)
