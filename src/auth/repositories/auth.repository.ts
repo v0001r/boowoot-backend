@@ -15,7 +15,7 @@ export class AuthRepository extends EntityRepository<AuthDocument> {
   async getById(_id: string) {
     let user;
     try {
-      user = await this.authModel.findOne({ _id, status: true }, 'title status email mobile refresh_token').exec();
+      user = await this.authModel.findOne({ _id, status: true }, 'title status ref_id email mobile refresh_token').exec();
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -26,7 +26,7 @@ export class AuthRepository extends EntityRepository<AuthDocument> {
   async getByEmail(email: string) {
     let user;
     try {
-      user = await this.authModel.findOne({ email, status: true }, '_id status email mobile password refresh_token').exec();
+      user = await this.authModel.findOne({ email, status: true }, '_id status ref_id email mobile password refresh_token').exec();
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -35,7 +35,7 @@ export class AuthRepository extends EntityRepository<AuthDocument> {
   async getByPhone(mobile: string) {
     let user;
     try {
-      user = await this.authModel.findOne({ mobile, status: true }, '_id status email mobile password refresh_token').exec();
+      user = await this.authModel.findOne({ mobile, status: true }, '_id status email ref_id mobile password refresh_token').exec();
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

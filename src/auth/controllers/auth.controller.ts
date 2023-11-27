@@ -10,12 +10,19 @@ import ForgotPasswordDto from '../dto/forgot-password.dto';
 import ResetPasswordDto from '../dto/reset-password.dto';
 import RegisterUserDto from '../dto/register-user.dto';
 import ParamsWithId from 'src/common/params-with-id';
+import ChangePasswordDto from '../dto/change-password.dto';
 
 @Controller('auth')
 export class AuthController {
     constructor(
         private readonly authService: AuthService
     ) {}
+
+    @HttpCode(HttpStatus.OK)
+    @Get('')
+    async apiCheck() {
+        return {all: 'ok'}
+    }
 
     @HttpCode(HttpStatus.OK)
     @Post('register')
@@ -103,6 +110,13 @@ export class AuthController {
         return {'status': 400, 'message': 'something went wrong'};
     }
 
+    @HttpCode(HttpStatus.OK)
+    @Post('change-password')
+    async changePassword(@Body() body: ChangePasswordDto) {
+        return await this.authService.changePassword(body)
+    }
+
+
     // @HttpCode(HttpStatus.OK)
     // @Get('profile')
     // async getProfile(@Body() body) {
@@ -121,13 +135,6 @@ export class AuthController {
     //     return {'status': 400, 'message': 'something went wrong'};
     // }
 
-    // @HttpCode(HttpStatus.OK)
-    // @Get('profile:id')
-    // findOne(@Param('userId') userId: string) {
-    //     console.log(userId);
-    //   return this.authService.getProfile(userId);
-      
-    // }
 
     @Get(':id')
     async findOne(@Param('id') id : string) {
@@ -137,7 +144,8 @@ export class AuthController {
             id: user._id.toString(),
             email: user.email,
             mobile: user.mobile,
-            status: user.status
+            status: user.status,
+            ref_id: user.ref_id.toString()
         }
         return data;
     }
@@ -182,18 +190,38 @@ export class AuthController {
     }
 
     }
+
     @HttpCode(HttpStatus.OK)
     @Post('verify-token')
     async verifyToken(@Body() body) {
         const user = await this.authService.verifyToken(body.token);
         if(user){
+            return {
+                success: true,
+                userId: user._id.toString()
+            };
+        }
+    }
+
+    @HttpCode(HttpStatus.OK)
+    @Post('change-status')
+    async chnageStatus(@Body() body) {
+        const user = await this.authService.changeStatus(body);
+        if(user){
+            return {success: true,};
+        }
+        return {'status': 400, 'message': 'something went wrong'};
+    }
+
+    @Post('refresh')
+    async refresh(@Body() body) {
+        console.log(body);
+        
         return {
-            success: true,
-            userId: user._id.toString()
+            token: this.authService.getJwtAccessToken(body.id)
         };
     }
 
-    }
 
     @HttpCode(HttpStatus.OK)
     @Post('forgot-password')
@@ -202,9 +230,9 @@ export class AuthController {
     }
 
     @HttpCode(HttpStatus.OK)
-    @Put('rest-password')
+    @Put('reset-password')
     async resetPassword(@Body() body: ResetPasswordDto) {
-        // return await this.authService.resetPassword(body);
+        return await this.authService.resetPassword(body);
     }
 
     @HttpCode(HttpStatus.OK)

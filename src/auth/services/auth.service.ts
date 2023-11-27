@@ -10,6 +10,7 @@ import { RegisterDto } from '../dto/register.dto';
 import ForgotPasswordDto from '../dto/forgot-password.dto';
 import ResetPasswordDto from '../dto/reset-password.dto';
 import RegisterUserDto from '../dto/register-user.dto';
+import ChangePasswordDto from '../dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -200,6 +201,55 @@ export class AuthService {
             return {success: true};
         } catch(error) {
             throw new HttpException(error.response, error.status);
+        }
+    }
+
+    async changePassword(data: ChangePasswordDto) {
+            const userData = await this.authRepository.findOne({
+                _id: data.id,
+            });
+            if(userData){
+            //Compare Password
+            const areEqual = await bcrypt.compare(data.old_password, userData.password);
+            if (!areEqual)
+                throw new HttpException("Wrong old password", HttpStatus.UNAUTHORIZED);
+
+            // can't be same as old password
+            if(data.old_password === data.new_password)
+                throw new HttpException("Can't use your old password", HttpStatus.UNAUTHORIZED);
+
+            // confirm passwords
+            if(data.new_password !== data.conf_password)
+                throw new HttpException("Both passwords does not match", HttpStatus.UNAUTHORIZED);
+
+            let password = await bcrypt.hash(data.new_password, 10);
+            await this.authRepository.findOneAndUpdate({
+                _id: userData._id,
+            }, { $set: {
+                password: password,
+                }
+            },
+            );
+            return {success: true};
+            }
+        // Send user an email about password changed (to do)
+
+    }
+    
+    async changeStatus(data) {
+        const userData = await this.authRepository.findOne({
+             ref_id: data.id,
+        });
+        if(userData){
+            await this.authRepository.findOneAndUpdate({
+                 _id: userData._id,
+            },
+            { $set: {
+                status: data.status,
+            }
+            },
+            );
+        return {success: true};
         }
     }
 
