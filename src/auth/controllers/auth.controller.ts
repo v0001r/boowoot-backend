@@ -214,9 +214,7 @@ export class AuthController {
     }
 
     @Post('refresh')
-    async refresh(@Body() body) {
-        console.log(body);
-        
+    async refresh(@Body() body) {        
         return {
             token: this.authService.getJwtAccessToken(body.id)
         };
