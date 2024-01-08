@@ -1,20 +1,12 @@
 import { IsString, IsNotEmpty, MinLength, IsEnum } from 'class-validator';
-import { ValidateConfPassword } from 'src/common/validators/validate-confpassword';
 
 export enum USER_TYPES {
-    ADMIN = 'AD',
-    STAFF = 'S',
-    AGENT = 'A',
-    CLIENT = 'C',
-    CHANNEL_PARTNER = 'CP',
-    CHILD_USER = 'CU',
+    ADMIN = 'A',
+    USER = 'U',
+    TRAINER = 'T',
 }
 
 export class RegisterDto {
-
-    @IsNotEmpty()
-    @IsString()
-    ref_id: string;
 
     @IsNotEmpty()
     @IsString()
@@ -37,11 +29,6 @@ export class RegisterDto {
     @IsString()
     password: string;
 
-    @IsString()
-    ip: string;
-
-    @IsString()
-    mac_id: string;
 }
 
 export default RegisterDto;

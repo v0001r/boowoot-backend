@@ -27,8 +27,8 @@ export class AuthController {
     @HttpCode(HttpStatus.OK)
     @Post('register')
     async register(@Body() body: RegisterDto) {
-        await this.authService.register(body);
-        return {success: true}
+        
+        return await this.authService.register(body);
     }
 
     @HttpCode(HttpStatus.OK)
@@ -43,7 +43,11 @@ export class AuthController {
         return {
             token: accessToken,
             refresh_token: refreshToken,
-            userId: user._id.toString()
+            userId: user._id.toString(),
+            user_type: user.user_type.toString(),
+            email: user.email.toString(),
+            mobile: user.mobile.toString(),
+            status: user.status.toString(),
         };
     }
        return {'status': 400, 'message': 'something went wrong'};
@@ -145,7 +149,6 @@ export class AuthController {
             email: user.email,
             mobile: user.mobile,
             status: user.status,
-            ref_id: user.ref_id.toString()
         }
         return data;
     }

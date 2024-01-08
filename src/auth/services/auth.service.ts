@@ -41,7 +41,7 @@ export class AuthService {
 
     public async validate(username: string, pass: string) {
         try {
-            const user = await this.authRepository.getByEmail(username);
+            const user = await this.authRepository.getEmail(username);
             if (!user) {
                 throw new HttpException('Staff does not exists', HttpStatus.BAD_REQUEST);
             }
@@ -144,28 +144,25 @@ export class AuthService {
     async register(userData: RegisterDto) {
         try {
             //  check if user exist with given email id
-            const user = await this.authRepository.getByEmail(userData.email);
+            const user = await this.authRepository.getByEmail(userData.email, userData.user_type);
             if(user) {
                 throw new HttpException('User already exist with given email id', HttpStatus.BAD_REQUEST);
             }
-            const usermobile = await this.authRepository.getByPhone(userData.mobile);
-                        
-            if(usermobile) {
-                throw new HttpException('User already exist with given Mobile', HttpStatus.BAD_REQUEST);
+
+            const data = {
+                name: userData.name,
+                email: userData.email,
+                mobile: userData.mobile,
+                user_type: userData.user_type
             }
 
             await this.authRepository.create({
-                ...userData,
+                ...data,
                 password: await bcrypt.hash(userData.password, 10)
             });
             return {success: true};
         } catch (error) {
             console.log(error);
-            // if (error?.response !== undefined
-            //     || error?.response !== ''
-            //     || error?.response !== null) {
-            //     throw new HttpException(error.response, error.status);
-            // }
             throw new HttpException(error.response, error.status);
         }
     }
@@ -173,7 +170,7 @@ export class AuthService {
     async forgotPassword(body: ForgotPasswordDto) {
         try {
             // Check user exist or not
-            const userData = await this.authRepository.getByEmail(body.email);
+            const userData = await this.authRepository.getEmail(body.email);
             if(!userData)
                 throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
 
