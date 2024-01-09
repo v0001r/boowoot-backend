@@ -53,6 +53,16 @@ export class AuthRepository extends EntityRepository<AuthDocument> {
 
     return user;
   }
+  async getByPhoneStatus(mobile: string) {
+    let user;
+    try {
+      user = await this.authModel.findOne({ mobile, status: true }, '_id status email user_type mobile password refresh_token').exec();
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+
+    return user;
+  }
 
   async getIfRefreshTokenMatches(refreshToken: string, userId: string) {
     const user = await this.getById(userId);

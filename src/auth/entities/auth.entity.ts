@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Transform } from 'class-transformer';
 import { Document, ObjectId, SchemaTypes } from 'mongoose';
-import { USER_TYPES } from '../dto/register-user.dto';
+import { USER_TYPES } from '../dto/register.dto';
 
 @Schema({versionKey: false, timestamps: true})
 export class Auth {

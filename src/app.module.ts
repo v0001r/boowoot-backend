@@ -6,6 +6,7 @@ import * as Joi from 'joi';
 // Custom Validations
 import { ValidateConfPasswordConstraint } from './common/validators/validate-confpassword';
 import { MongooseModule } from '@nestjs/mongoose';
+import { TrainersModule } from './trainers/trainers.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { MongooseModule } from '@nestjs/mongoose';
       inject: [ConfigService],
     }),
     AuthModule,
+    TrainersModule,
   ],
   controllers: [],
   providers: [
