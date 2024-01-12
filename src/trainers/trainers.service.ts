@@ -132,11 +132,44 @@ async findOne(id: string) {
 
 }
 
-  update(id: number, updateTrainerDto: UpdateTrainerDto) {
-    return `This action updates a #${id} trainer`;
+
+async approve(body){
+  
+    const update = {
+      status: "A"
+    }
+
+    await this.trainerRepository.findOneAndUpdate(
+      {
+        ref_id: body.id,
+      },
+      { $set:update},
+    );
+    // console.log(trainer);
+    return {success: true};
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} trainer`;
+async reject(body){
+  
+    const update = {
+      status: "R"
+    }
+
+    await this.trainerRepository.findOneAndUpdate(
+      {
+        ref_id: body.id,
+      },
+      { $set:update},
+    );
+    // console.log(trainer);
+    return {success: true};
   }
+
+  // update(id: number, updateTrainerDto: UpdateTrainerDto) {
+  //   return `This action updates a #${id} trainer`;
+  // }
+
+  // remove(id: number) {
+  //   return `This action removes a #${id} trainer`;
+  // }
 }

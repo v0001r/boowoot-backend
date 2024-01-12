@@ -11,8 +11,17 @@ export class TrainersController {
   constructor(private readonly trainersService: TrainersService, @Inject(REQUEST) private readonly request: Request) {}
 
   @Post()
-  create(@Body() createTrainerDto: CreateTrainerDto) {
-    return this.trainersService.create(createTrainerDto);
+  async create(@Body() createTrainerDto: CreateTrainerDto) {
+    return await this.trainersService.create(createTrainerDto);
+  }
+
+  @Post('approve')
+  approve(@Body() body) {
+    return this.trainersService.approve(body);
+  }
+  @Post('reject')
+  reject(@Body() body) {
+    return this.trainersService.reject(body);
   }
 
   @Get()
@@ -25,13 +34,13 @@ export class TrainersController {
     return this.trainersService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTrainerDto: UpdateTrainerDto) {
-    return this.trainersService.update(+id, updateTrainerDto);
-  }
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateTrainerDto: UpdateTrainerDto) {
+  //   return this.trainersService.update(+id, updateTrainerDto);
+  // }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.trainersService.remove(+id);
-  }
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.trainersService.remove(+id);
+  // }
 }

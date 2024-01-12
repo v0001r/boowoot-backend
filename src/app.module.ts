@@ -14,19 +14,13 @@ import { TrainersModule } from './trainers/trainers.module';
       isGlobal: true,
       validationSchema: Joi.object({
         PORT: Joi.number(),
-        MONGO_DB_CONNECTION: Joi.string().required(),
-        MONGO_DB_NAME: Joi.string().required(),
-        JWT_SECRET: Joi.string().required(),
-        JWT_EXPIRATION_TIME: Joi.string().required(),
-        JWT_REFRESH_SECRET: Joi.string().required(),
-        JWT_REFRESH_EXPIRATION_TIME: Joi.string().required(),
       })
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
-        uri: configService.get('MONGO_DB_CONNECTION'),
-        dbName: configService.get('MONGO_DB_NAME'),
+        uri: 'mongodb://127.0.0.1:27017',
+        dbName: 'boowoot-backend',
       }),
       inject: [ConfigService],
     }),

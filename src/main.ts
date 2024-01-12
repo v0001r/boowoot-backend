@@ -30,7 +30,7 @@ async function bootstrap() {
   });
 
   const port = configService.get<number>('PORT');
-  await app.listen(port ?? '4000');
-  console.log(`Application listening in port: ${port}`);
+  await app.listen('5011');
+  console.log(`Application listening in port: 5011`);
 }
 bootstrap();

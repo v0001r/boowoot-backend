@@ -23,8 +23,8 @@ export class AuthService {
     public getJwtAccessToken(userId: string) {
         const payload: TokenPayload = { userId };
         const token = this.jwtService.sign(payload, {
-            secret: this.configService.get('JWT_SECRET'),
-            expiresIn: `${this.configService.get('JWT_EXPIRATION_TIME')}s`
+            secret: "f704f24d01d3d5c86b768765bff7108facc6030754a2d351e1e4638281d15348",
+            expiresIn: "86400s"
         })
         
         return token;
@@ -33,8 +33,8 @@ export class AuthService {
     public getJwtRefreshToken(userId: string) {
         const payload: TokenPayload = { userId };
         const refreshToken = this.jwtService.sign(payload, {
-            secret: this.configService.get('JWT_REFRESH_SECRET'),
-            expiresIn: `${this.configService.get('JWT_REFRESH_EXPIRATION_TIME')}s`
+            secret: "f704f24d01d3d5c86b768765bff7108facc6030754a2d351e1e4638281d15348",
+            expiresIn: "604800s"
         })
         return refreshToken;
     }
@@ -177,8 +177,8 @@ export class AuthService {
             // Generate password reset token
             const payload: TokenPayload = { userId: userData._id };
             const token = this.jwtService.sign(payload, {
-                secret: this.configService.get('JWT_SECRET'),
-                expiresIn: `${this.configService.get('JWT_EXPIRATION_TIME')}s`
+                secret: "f704f24d01d3d5c86b768765bff7108facc6030754a2d351e1e4638281d15348",
+                expiresIn: "86400s"
             });
 
             // Update user password reset token

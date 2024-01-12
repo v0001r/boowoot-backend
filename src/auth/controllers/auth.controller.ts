@@ -45,6 +45,7 @@ export class AuthController {
             refresh_token: refreshToken,
             userId: user._id.toString(),
             user_type: user.user_type.toString(),
+            name: user.name.toString(),
             email: user.email.toString(),
             mobile: user.mobile.toString(),
             status: user.status.toString(),
