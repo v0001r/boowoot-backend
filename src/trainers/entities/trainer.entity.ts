@@ -91,11 +91,11 @@ export class Trainer {
         type: [String]
     })
     servicing_area: string[];
-    
     @Prop({
-        type: String,       
+        type: [String]
     })
-    pin: string;
+    documents: string[];
+   
 
     @Prop({
         type: String,
@@ -103,6 +103,12 @@ export class Trainer {
         enum: STATUS
     })
     status: string;
+
+    @Prop({
+        type: String,
+        default: 'Unblock'
+    })
+    block_status: string;
 
     @Prop({
         type: String,

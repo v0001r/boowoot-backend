@@ -6,6 +6,7 @@ import { Trainer, TrainerSchema } from './entities/trainer.entity';
 import { AuthRepository } from 'src/auth/repositories/auth.repository';
 import { TrainerRepository } from './trainers.repository';
 import { Auth, AuthSchema } from 'src/auth/entities/auth.entity';
+import { FilesModule } from '../files/files.module';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { Auth, AuthSchema } from 'src/auth/entities/auth.entity';
         schema: AuthSchema,
       },
     ]),
-    
+    FilesModule
   ],
   controllers: [TrainersController],
   providers: [TrainersService, AuthRepository, TrainerRepository,TrainersService]

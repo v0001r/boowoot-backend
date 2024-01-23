@@ -8,6 +8,7 @@ import { UpdateTrainerDto } from './dto/update-trainer.dto';
 import { TrainerRepository } from './trainers.repository';
 import { AuthRepository } from 'src/auth/repositories/auth.repository';
 import { Trainer, TrainerDocument } from './entities/trainer.entity';
+import * as AWS from 'aws-sdk';
 
 @Injectable()
 export class TrainersService {
@@ -15,11 +16,16 @@ export class TrainersService {
   constructor(
     private readonly trainerRepository: TrainerRepository,
     private readonly authRepository: AuthRepository,
+
     @InjectModel(Trainer.name) private readonly trainerModel: Model<TrainerDocument>,
 
 
 ) {}
- 
+AWS_S3_BUCKET = 'bowoot-images';
+s3 = new AWS.S3({
+  accessKeyId: 'AKIAW3MED4D64A4TWK2I',
+  secretAccessKey: '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',
+});
 async create(createTrainerDto: CreateTrainerDto) {
     try {
       //  check if user exist with given email id
@@ -54,6 +60,7 @@ async create(createTrainerDto: CreateTrainerDto) {
         service_type: createTrainerDto.serviceType,
         servicing_area: createTrainerDto.servicingArea,
         pin: createTrainerDto.pin,
+        documents: Object.values(createTrainerDto.documents),
         status: "P",
         otp: otp.toString()
       }
@@ -148,6 +155,36 @@ async approve(body){
     // console.log(trainer);
     return {success: true};
   }
+async block(body){
+  
+    const update = {
+      block_status: "Block"
+    }
+
+    await this.trainerRepository.findOneAndUpdate(
+      {
+        ref_id: body.id,
+      },
+      { $set:update},
+    );
+    // console.log(trainer);
+    return {success: true};
+  }
+async unblock(body){
+  
+    const update = {
+      block_status: "Unblock"
+    }
+
+    await this.trainerRepository.findOneAndUpdate(
+      {
+        ref_id: body.id,
+      },
+      { $set:update},
+    );
+    // console.log(trainer);
+    return {success: true};
+  }
 
 async reject(body){
   
@@ -165,6 +202,38 @@ async reject(body){
     return {success: true};
   }
 
+  async upload(file) {
+    // console.log(file);
+    const { originalname } = file;
+
+    return await this.s3_upload(
+      file.buffer,
+      this.AWS_S3_BUCKET,
+      originalname,
+      file.mimetype,
+    );
+  }
+
+  async s3_upload(file, bucket, name, mimetype) {
+    const params = {
+      Bucket: bucket,
+      Key: String(name),
+      Body: file,
+      ACL: 'public-read',
+      ContentType: mimetype,
+      ContentDisposition: 'inline',
+      CreateBucketConfiguration: {
+        LocationConstraint: 'ap-south-1',
+      },
+    };
+
+    try {
+      let s3Response = await this.s3.upload(params).promise();
+      return s3Response.Location;
+    } catch (e) {
+      console.log(e);
+    }
+  }
   // update(id: number, updateTrainerDto: UpdateTrainerDto) {
   //   return `This action updates a #${id} trainer`;
   // }

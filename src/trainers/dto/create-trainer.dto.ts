@@ -69,4 +69,6 @@ export class CreateTrainerDto {
 
     servicingArea: [];
 
+    documents: []
+
 }

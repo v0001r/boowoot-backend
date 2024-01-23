@@ -7,6 +7,7 @@ import * as Joi from 'joi';
 import { ValidateConfPasswordConstraint } from './common/validators/validate-confpassword';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TrainersModule } from './trainers/trainers.module';
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { TrainersModule } from './trainers/trainers.module';
     }),
     AuthModule,
     TrainersModule,
+    FilesModule
   ],
   controllers: [],
   providers: [
