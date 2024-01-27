@@ -23,8 +23,8 @@ export class TrainersService {
 ) {}
 AWS_S3_BUCKET = 'bowoot-images';
 s3 = new AWS.S3({
-  accessKeyId: 'AKIAW3MED4D64A4TWK2I',
-  secretAccessKey: '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',
+  accessKeyId: '',
+  secretAccessKey: '',
 });
 async create(createTrainerDto: CreateTrainerDto) {
     try {
