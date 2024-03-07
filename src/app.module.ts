@@ -8,6 +8,12 @@ import { ValidateConfPasswordConstraint } from './common/validators/validate-con
 import { MongooseModule } from '@nestjs/mongoose';
 import { TrainersModule } from './trainers/trainers.module';
 import { FilesModule } from './files/files.module';
+import { CorporateEnquiryModule } from './corporate-enquiry/corporate-enquiry.module';
+import { NeoEnquiryModule } from './neo-enquiry/neo-enquiry.module';
+import { DietPlansModule } from './diet-plans/diet-plans.module';
+import { FitnessPlansModule } from './fitness-plans/fitness-plans.module';
+import { BookSessionsModule } from './book-sessions/book-sessions.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({
   imports: [
@@ -27,7 +33,13 @@ import { FilesModule } from './files/files.module';
     }),
     AuthModule,
     TrainersModule,
-    FilesModule
+    FilesModule,
+    CorporateEnquiryModule,
+    NeoEnquiryModule,
+    DietPlansModule,
+    FitnessPlansModule,
+    BookSessionsModule,
+    ReviewsModule
   ],
   controllers: [],
   providers: [
