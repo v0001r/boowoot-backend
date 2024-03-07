@@ -1,11 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Req, Inject, Scope, Injectable } from '@nestjs/common';
 import { NeoEnquiryService } from './neo-enquiry.service';
 import { CreateNeoEnquiryDto } from './dto/create-neo-enquiry.dto';
 import { UpdateNeoEnquiryDto } from './dto/update-neo-enquiry.dto';
+import { Express, Request } from 'express';
+import { REQUEST } from '@nestjs/core';
 
 @Controller('neo-enquiry')
+@Injectable({ scope: Scope.REQUEST })
+
 export class NeoEnquiryController {
-  constructor(private readonly neoEnquiryService: NeoEnquiryService) {}
+  constructor(private readonly neoEnquiryService: NeoEnquiryService, @Inject(REQUEST) private readonly request: Request) {}
 
   @Post()
   create(@Body() createNeoEnquiryDto: CreateNeoEnquiryDto) {
@@ -13,22 +17,9 @@ export class NeoEnquiryController {
   }
 
   @Get()
-  findAll() {
-    return this.neoEnquiryService.findAll();
+  findAll(@Req() req: Request) {
+    return this.neoEnquiryService.find(req.query);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.neoEnquiryService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateNeoEnquiryDto: UpdateNeoEnquiryDto) {
-    return this.neoEnquiryService.update(+id, updateNeoEnquiryDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.neoEnquiryService.remove(+id);
-  }
+ 
 }
