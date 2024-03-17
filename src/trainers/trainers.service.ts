@@ -23,53 +23,55 @@ export class TrainersService {
 ) {}
 AWS_S3_BUCKET = 'bowoot-images';
 s3 = new AWS.S3({
-  accessKeyId: '',
-  secretAccessKey: '',
+  accessKeyId: 'AKIAW3MED4D62VFI7WFZ',
+  secretAccessKey: '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',
 });
-async create(createTrainerDto: CreateTrainerDto) {
+async create(body) {
     try {
       //  check if user exist with given email id
-      const email = await this.authRepository.getEmail(createTrainerDto.email);
+      const email = await this.authRepository.getEmail(body.email);
       if(email) {
           throw new HttpException('Trainer already exist with given email id', HttpStatus.BAD_REQUEST);
       }
-      const phone = await this.authRepository.getByPhone(createTrainerDto.phone);
+      const phone = await this.authRepository.getByPhone(body.phone);
       if(phone) {
           throw new HttpException('Trainer already exist with given Phone', HttpStatus.BAD_REQUEST);
+      }
+
+      if(body.phone.length != 10){
+        throw new HttpException('Phone number must be 10 digits', HttpStatus.BAD_REQUEST);
+
+      }
+
+      if(body.pin.length != 6){
+        throw new HttpException('Pin code must be 6 digits', HttpStatus.BAD_REQUEST);
+
       }
 
 
       const otp = Math.floor(1000 + Math.random() * 9000);
       const traineData = {
-        name: createTrainerDto.name,
-        email: createTrainerDto.email,
-        phone: createTrainerDto.phone,
-        gender: createTrainerDto.gender,
-        age: createTrainerDto.age,
-        language: createTrainerDto.language,
-        state: createTrainerDto.state,
-        account_holder_name: createTrainerDto.account_holder_name,
-        account_no: createTrainerDto.account_no,
-        confirm_account_no: createTrainerDto.confirm_account_no,
-        bank_name: createTrainerDto.bank_name,
-        branch_name: createTrainerDto.branch_name,
-        ifsc_code: createTrainerDto.ifsc_code,
-        c_address: createTrainerDto.c_address,
-        district: createTrainerDto.district,
-        qualification: createTrainerDto.qualification,
-        service_type: createTrainerDto.serviceType,
-        servicing_area: createTrainerDto.servicingArea,
-        pin: createTrainerDto.pin,
-        documents: Object.values(createTrainerDto.documents),
+        name: body.name,
+        email: body.email,
+        phone: body.phone,
+        gender: body.gender,
+        service_type: body.type,
+        c_address: body.c_address,
+        district: body.district,
+        pin: body.pin,
+        state: body.state,
+        servicing_area: body.servicingArea,
         status: "P",
+        kyc: '1',
         otp: otp.toString()
       }
 
       const data = {
-          name: createTrainerDto.name,
-          email: createTrainerDto.email,
-          mobile: createTrainerDto.phone,
-          user_type: 'T'
+          name: body.name,
+          email: body.email,
+          mobile: body.phone,
+          user_type: 'T',
+          kyc: '1',
       }
 
      const trainer =  await this.trainerRepository.create({...traineData});
@@ -78,7 +80,7 @@ async create(createTrainerDto: CreateTrainerDto) {
 
        const userCreated = await this.authRepository.create({
         ...data,
-        password: await bcrypt.hash(createTrainerDto.password, 10)
+        password: await bcrypt.hash(body.password, 10)
        });
 
        if(userCreated){
@@ -234,9 +236,50 @@ async reject(body){
       console.log(e);
     }
   }
-  // update(id: number, updateTrainerDto: UpdateTrainerDto) {
-  //   return `This action updates a #${id} trainer`;
-  // }
+ async update(id: any, body, image ) {
+
+    console.log(body);
+    const update = {
+      age: body.age,
+      account_holder_name: body.account_holder_name,
+      language: body.language,
+      state: body.state,
+      account_no: body.account_no,
+      pin: body.pin,
+      confirm_account_no: body.confirm_account_no,
+      bank_name: body.bank_name,
+      branch_name: body.branch_name,
+      ifsc_code: body.ifsc_code,
+      c_address: body.c_address,
+      district: body.district,
+      qualification: body.qualification,
+      servicingArea: body.servicingArea,
+      certificate: body.certificate,
+      pan: body.pan,
+      photo: body.photo,
+      adhhar: body.adhhar,
+    }
+
+    let auth = {
+      kyc: 2
+    };
+
+    await this.trainerRepository.findOneAndUpdate(
+      {
+        ref_id: id,
+      },
+      { $set:update},
+    );
+    await this.authRepository.findOneAndUpdate(
+      {
+        _id: id,
+      },
+      { $set:auth},
+    );
+    // console.log(trainer);
+    return {success: true};
+    // return `This action updates a #${id} trainer`;
+  }
 
   // remove(id: number) {
   //   return `This action removes a #${id} trainer`;

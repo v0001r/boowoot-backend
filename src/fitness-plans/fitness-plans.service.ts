@@ -15,7 +15,7 @@ export class FitnessPlansService {
 ) {}
 
   async create(body) {
-    console.log(body.fitnessplans);
+    console.log(body);
   try {
     let data = {
       'plan': body.plan,

@@ -82,6 +82,10 @@ export class Trainer {
     @Prop({
         type: String
     })
+    pin: string;
+    @Prop({
+        type: String
+    })
     qualification: string;
     @Prop({
         type: [String]
@@ -95,6 +99,22 @@ export class Trainer {
         type: [String]
     })
     documents: string[];
+    @Prop({
+        type: String
+    })
+    adhhar: string;
+    @Prop({
+        type: String
+    })
+    pan: string;
+    @Prop({
+        type: String
+    })
+    photo: string;
+    @Prop({
+        type: String
+    })
+    certificate: string;
    
 
     @Prop({
@@ -114,6 +134,11 @@ export class Trainer {
         type: String,
     })
     otp: string;
+
+    @Prop({
+        type: String,
+    })
+    kyc: string;
 
     @Prop()
     createdAt: Date

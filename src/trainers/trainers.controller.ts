@@ -5,6 +5,7 @@ import { CreateTrainerDto } from './dto/create-trainer.dto';
 import { UpdateTrainerDto } from './dto/update-trainer.dto';
 import { REQUEST } from '@nestjs/core';
 import { FileInterceptor } from '@nestjs/platform-express';
+import ParamsWithId from '../common/params-with-id';
 
 @Controller('trainers')
 @Injectable({ scope: Scope.REQUEST })
@@ -12,8 +13,8 @@ export class TrainersController {
   constructor(private readonly trainersService: TrainersService, @Inject(REQUEST) private readonly request: Request) {}
 
   @Post()
-  async create(@Body() createTrainerDto: CreateTrainerDto) {
-    return await this.trainersService.create(createTrainerDto);
+  async create(@Body() body) {
+    return await this.trainersService.create(body);
   }
 
   @Post('approve')
@@ -58,5 +59,24 @@ export class TrainersController {
   findOne(@Param('id') id: string) {
     return this.trainersService.findOne(id);
   }
+
+  @Patch(':id')
+  @UseInterceptors(FileInterceptor('image'))
+  update(
+    @Param() { id }: ParamsWithId,
+    @Body() body, 
+    @UploadedFile( 
+      new ParseFilePipe({
+        fileIsRequired: false,
+        validators: [
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 5 }),  // 5 MB
+        ],
+      }),
+    ) image: Express.Multer.File
+    ) {
+    return this.trainersService.update(id, body, image);
+  }
+
 
 }

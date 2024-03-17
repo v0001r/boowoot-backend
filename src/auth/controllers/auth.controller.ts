@@ -35,6 +35,7 @@ export class AuthController {
     @Post('login')
     async login(@Body() request) {
         const user = await this.authService.validate(request.username, request.password);
+        console.log(user);
         if(user){
         const accessToken = this.authService.getJwtAccessToken(user._id.toString());
         const refreshToken = this.authService.getJwtRefreshToken(user._id.toString());
@@ -49,6 +50,7 @@ export class AuthController {
             email: user.email.toString(),
             mobile: user.mobile.toString(),
             status: user.status.toString(),
+            kyc: user.kyc,
         };
     }
        return {'status': 400, 'message': 'something went wrong'};

@@ -148,6 +148,10 @@ export class AuthService {
             if(user) {
                 throw new HttpException('User already exist with given email id', HttpStatus.BAD_REQUEST);
             }
+            const phone = await this.authRepository.getByPhone(userData.mobile);
+            if(phone) {
+                throw new HttpException('User already exist with given mobile', HttpStatus.BAD_REQUEST);
+            }
 
             const data = {
                 name: userData.name,

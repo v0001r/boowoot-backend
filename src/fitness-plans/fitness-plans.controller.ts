@@ -10,7 +10,7 @@ export class FitnessPlansController {
   constructor(private readonly fitnessPlansService: FitnessPlansService, @Inject(REQUEST) private readonly request: Request) {}
 
   @Post()
-  create(body) {
+  create(@Body() body) {
     return this.fitnessPlansService.create(body);
  }
 

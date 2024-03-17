@@ -28,7 +28,7 @@ export class AuthRepository extends EntityRepository<AuthDocument> {
   async getByEmail(email: string, user_type: string) {
     let user;
     try {
-      user = await this.authModel.findOne({ email, status: true, user_type: user_type}, '_id status user_type email mobile password refresh_token').exec();
+      user = await this.authModel.findOne({ email, status: true, user_type: user_type}, '_id status user_type email mobile password refresh_token kyc').exec();
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -37,7 +37,7 @@ export class AuthRepository extends EntityRepository<AuthDocument> {
   async getEmail(email: string) {
     let user;
     try {
-      user = await this.authModel.findOne({ email, status: true}, '_id status user_type email mobile password name refresh_token').exec();
+      user = await this.authModel.findOne({ email, status: true}, '_id status user_type email mobile password name refresh_token kyc').exec();
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -46,7 +46,7 @@ export class AuthRepository extends EntityRepository<AuthDocument> {
   async getByPhone(mobile: string) {
     let user;
     try {
-      user = await this.authModel.findOne({ mobile, status: true }, '_id status email user_type mobile password refresh_token').exec();
+      user = await this.authModel.findOne({ mobile, status: true }, '_id status email user_type mobile password refresh_token kyc').exec();
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -56,7 +56,7 @@ export class AuthRepository extends EntityRepository<AuthDocument> {
   async getByPhoneStatus(mobile: string) {
     let user;
     try {
-      user = await this.authModel.findOne({ mobile, status: true }, '_id status email user_type mobile password refresh_token').exec();
+      user = await this.authModel.findOne({ mobile, status: true }, '_id status email user_type mobile password refresh_token kyc').exec();
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

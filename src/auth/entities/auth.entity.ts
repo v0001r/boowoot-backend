@@ -56,6 +56,12 @@ export class Auth {
     password_reset_token: string;
 
     @Prop({
+        type: String,
+        default: '1'
+    })
+    kyc: string;
+
+    @Prop({
         type: Number,
         required: false,
         default: null
