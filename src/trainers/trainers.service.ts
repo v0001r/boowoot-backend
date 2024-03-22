@@ -258,6 +258,7 @@ async reject(body){
       pan: body.pan,
       photo: body.photo,
       adhhar: body.adhhar,
+      kyc: '2'
     }
 
     let auth = {
