@@ -9,6 +9,7 @@ import { TrainerRepository } from './trainers.repository';
 import { AuthRepository } from 'src/auth/repositories/auth.repository';
 import { Trainer, TrainerDocument } from './entities/trainer.entity';
 import * as AWS from 'aws-sdk';
+import { MailService } from './../mail/mail.service';
 
 @Injectable()
 export class TrainersService {
@@ -16,7 +17,7 @@ export class TrainersService {
   constructor(
     private readonly trainerRepository: TrainerRepository,
     private readonly authRepository: AuthRepository,
-
+    private mailService: MailService,
     @InjectModel(Trainer.name) private readonly trainerModel: Model<TrainerDocument>,
 
 
@@ -95,6 +96,14 @@ async create(body) {
           },
           { $set:update},
         );
+
+        let email = {
+          user_id : userCreated._id,
+          name: body.name,
+          email: body.email
+        }
+        await this.mailService.sendUserConfirmation(email);
+
        }
      }
       return {success: true};
@@ -205,8 +214,8 @@ async reject(body){
   }
 
   async upload(file) {
-    // console.log(file);
     const { originalname } = file;
+    // console.log(originalname);
 
     return await this.s3_upload(
       file.buffer,
@@ -231,29 +240,24 @@ async reject(body){
 
     try {
       let s3Response = await this.s3.upload(params).promise();
-      return s3Response.Location;
+      return s3Response;
     } catch (e) {
       console.log(e);
     }
   }
  async update(id: any, body, image ) {
 
-    console.log(body);
+    // console.log(body);
     const update = {
       age: body.age,
       account_holder_name: body.account_holder_name,
       language: body.language,
-      state: body.state,
       account_no: body.account_no,
-      pin: body.pin,
       confirm_account_no: body.confirm_account_no,
       bank_name: body.bank_name,
       branch_name: body.branch_name,
       ifsc_code: body.ifsc_code,
-      c_address: body.c_address,
-      district: body.district,
       qualification: body.qualification,
-      servicingArea: body.servicingArea,
       certificate: body.certificate,
       pan: body.pan,
       photo: body.photo,

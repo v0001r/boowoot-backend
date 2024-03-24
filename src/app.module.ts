@@ -14,6 +14,7 @@ import { DietPlansModule } from './diet-plans/diet-plans.module';
 import { FitnessPlansModule } from './fitness-plans/fitness-plans.module';
 import { BookSessionsModule } from './book-sessions/book-sessions.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -39,7 +40,8 @@ import { ReviewsModule } from './reviews/reviews.module';
     DietPlansModule,
     FitnessPlansModule,
     BookSessionsModule,
-    ReviewsModule
+    ReviewsModule,
+    MailModule
   ],
   controllers: [],
   providers: [

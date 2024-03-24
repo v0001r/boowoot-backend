@@ -7,6 +7,7 @@ import { AuthRepository } from 'src/auth/repositories/auth.repository';
 import { TrainerRepository } from './trainers.repository';
 import { Auth, AuthSchema } from 'src/auth/entities/auth.entity';
 import { FilesModule } from '../files/files.module';
+import { MailModule } from '../mail/mail.module';
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { FilesModule } from '../files/files.module';
         schema: AuthSchema,
       },
     ]),
-    FilesModule
+    FilesModule,
+    MailModule
   ],
   controllers: [TrainersController],
   providers: [TrainersService, AuthRepository, TrainerRepository,TrainersService]
